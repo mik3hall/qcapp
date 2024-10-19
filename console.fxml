@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="us.hall.qcapp.Console"> 
+   <children>
+      <TextArea fx:id="console" prefHeight="512.0" prefWidth="1024.0" /> 
+   </children>
+</AnchorPane>

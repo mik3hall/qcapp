@@ -1,0 +1,43 @@
+group strange;
+
+sourceIn(gateImports,nqbit) ::= <<
+package us.hall.strange;
+
+import us.hall.qcapp.Util;
+import us.hall.qcapp.XMLDocument;
+
+import org.redfx.strange.Program;
+import org.redfx.strange.QuantumExecutionEnvironment;
+import org.redfx.strange.Qubit;
+import org.redfx.strange.Result;
+import org.redfx.strange.Step;
+$gateImports:imports(); separator="\n"$
+import org.redfx.strange.local.SimpleQuantumExecutionEnvironment;
+import org.redfx.strangefx.render.Renderer;
+
+import javafx.application.Platform;
+
+public class Main {
+
+    private static final int dim = $nqbit$;
+
+    public static void main (String[] args) {
+        
+        Program program = new Program(dim);
+>>
+
+setStep(name,gate) ::= <<
+	Step $name$ = new Step(addGate());          
+>>
+
+setProbStep(name,gate) ::= <<
+	Step $name$ = new Step (new ProbabilitiesGate(0));
+>>
+
+imports() ::= <<
+import org.redfx.strange.gate.$it$;
+>>
+
+addSteps(namesList) ::= <<
+	program.addSteps($namesList; separator=", "$);
+>>
