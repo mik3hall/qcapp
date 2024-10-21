@@ -193,7 +193,9 @@ public class QuantumJava extends Application {
 				fileChooser.setTitle("Select QIS-XML");
 				fileChooser.getExtensionFilters().addAll(new ExtensionFilter("XML", "*.xml"));
 				File selectedFile = fileChooser.showOpenDialog(stage);
-				new StrangeProgram(selectedFile);
+				if (selectedFile != null) {
+					new StrangeProgram(selectedFile);
+				}
 				//XMLParser parser = new XMLParser(selectedFile);
 				//AnchorPane importRoot = (AnchorPane)iLoader.load();
 				//Stage istage = new Stage();

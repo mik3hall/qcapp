@@ -38,6 +38,7 @@ import org.redfx.strange.QuantumExecutionEnvironment;
 import org.redfx.strange.Result;
 import org.redfx.strange.local.SimpleQuantumExecutionEnvironment;
 import org.redfx.strangefx.render.Renderer;
+import org.redfx.strangefx.simulator.RenderModel;
 import org.redfx.strangefx.ui.GateSymbol;
 import org.redfx.strangefx.ui.QubitBoard;
 import org.redfx.strangefx.ui.QubitFlow;
@@ -55,13 +56,20 @@ public class Util {
 					System.out.println(indent + "QubitBoard(Group) " + n.getBoundsInParent());
 				}
 				else if (n instanceof QubitFlow) {
-					System.out.println(indent + "QubitFlow(Region) " + " width " + ((Region)n).getWidth() + " " + n.getBoundsInParent());
+					QubitFlowSized qbflow = new QubitFlowSized(((QubitFlow)n).getIndex(), new RenderModel());
+					
+					((QubitFlow)n).setPrefHeight(75);
+					((QubitFlow)n).setMaxHeight(75);
+					System.out.println(indent + "QubitFlow(Region) " + " width " + ((Region)n).getWidth() + " height " + ((Region)n).getHeight() + " " + n.getBoundsInParent());
 				}
 				else if (n instanceof StackPane) {
-					System.out.println(indent + n.getClass().getSimpleName() + " width " + ((Region)n).getWidth() + " "+ n.getBoundsInParent());
+					System.out.println(indent + n.getClass().getSimpleName() + " height " + ((StackPane)n).getHeight() + " property " + ((StackPane)n).heightProperty() + " " + n.getBoundsInParent());
 				}
 				else if (n instanceof GateSymbol) {
 					System.out.println(indent + "GateSymbol(Label) " + ((GateSymbol)n).getName() + " " + ((Label)n).getText() + " " + n.getBoundsInParent());
+				}
+				else if (n instanceof Label) {
+					System.out.println(indent + "Label " + ((Label)n).getText() + " " + n.getBoundsInParent());
 				}
 				else {
 					if (n instanceof Region) {
@@ -180,16 +188,20 @@ public class Util {
 			@Override
 			public void run() {
 				QubitBoard qb = Renderer.getRenderGroup(p);
+				int qubitsNum = qb.getChildren().size() / 2;
 				Controller controller = QuantumJava.getController();
 				controller.setTitle(title);
 				controller.getDisplayContainer().getChildren().clear();
 				controller.getDisplayContainer().setAlignment(Pos.TOP_LEFT);
 				VBox vbox = new VBox();
 				vbox.getChildren().addAll(qb.getChildren());
+				//show(vbox," ");
 				vbox.setOnMouseReleased(qb.getOnMouseReleased());
 				vbox.getStylesheets().add(getClass()
             		.getResource("/styles.css")
             		.toExternalForm());
+            	vbox.setPrefHeight(qubitsNum*9);
+            	vbox.setMaxHeight(qubitsNum*9);
 				controller.getDisplayContainer().getChildren().add(vbox);
 				BackgroundFill backgroundFill =
 					new BackgroundFill(
@@ -199,9 +211,20 @@ public class Util {
 							);
 				Background background = new Background(backgroundFill);
 				controller.getDisplayContainer().setBackground(background);
-				show(controller.getDisplayContainer().getParent()," ");
+				//show(controller.getDisplayContainer().getParent()," ");
 			}
 		});
+	}
+	
+	private static class QubitFlowSized extends QubitFlow {
+	
+		public QubitFlowSized(int index, RenderModel model) {
+			super(index, model);
+		}
+		
+		public void setHeight(double d) {
+			super.setHeight(d);
+		}
 	}
 	
 	public static void addProbabilities(Program p, int count) {

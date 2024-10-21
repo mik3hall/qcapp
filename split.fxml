@@ -17,13 +17,13 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="720.0" minWidth="1280.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="us.hall.qcapp.Controller">
    <children>
-      <SplitPane fx:id="splitPane" dividerPositions="0.64" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" orientation="VERTICAL" prefHeight="471.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <SplitPane fx:id="splitPane" dividerPositions="0.6399721448467967" minHeight="-Infinity" minWidth="-Infinity" orientation="VERTICAL" prefHeight="471.0" prefWidth="600.0" style="-fx-background-color: cornsilk;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <items>
-            <SplitPane dividerPositions="0.7171361502347418" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="456.0" prefWidth="1284.0">
+            <SplitPane dividerPositions="0.7137850467289719" minHeight="-Infinity" minWidth="-Infinity" prefHeight="456.0" prefWidth="1284.0" style="-fx-background-color: cornsilk;">
                <items>
-                  <StackPane fx:id="displayContainer" alignment="TOP_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-background-color: cornsilk;">
+                  <StackPane fx:id="displayContainer" alignment="TOP_LEFT" maxHeight="-Infinity" minHeight="100.0" prefHeight="456.0" style="-fx-background-color: cornsilk;">
                      <children>
-                        <BorderPane fx:id="displayPane" style="-fx-background-color: conrnsilk;" StackPane.alignment="TOP_LEFT">
+                        <BorderPane fx:id="displayPane" style="-fx-background-color: corrnsilk;" StackPane.alignment="TOP_LEFT">
                            <center>
                               <ImageView fx:id="imageView" fitHeight="216.0" fitWidth="420.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
                                  <image>
@@ -34,9 +34,9 @@
                         </BorderPane>
                      </children>
                   </StackPane>
-                  <ScrollPane prefHeight="200.0" prefWidth="200.0">
+                  <ScrollPane maxHeight="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: cornsilk; -fx-background-size: cover;">
                      <content>
-                        <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="455.0" prefWidth="357.0" style="-fx-background-color: cornsilk;">
+                        <VBox maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="672.0" prefWidth="357.0" style="-fx-background-color: cornsilk; -fx-background-size: cover;">
                            <children>
                               <Label text="Display Name">
                                  <VBox.margin>
@@ -93,7 +93,7 @@
                      </content></ScrollPane>
                </items>
             </SplitPane>
-            <TextArea fx:id="console" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="255.0" prefWidth="1286.0" />
+            <TextArea fx:id="console" maxWidth="-Infinity" prefHeight="255.0" prefWidth="1286.0" />
         </items>
       </SplitPane>
    </children>
