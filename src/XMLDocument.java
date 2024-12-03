@@ -18,13 +18,15 @@ import org.redfx.strangefx.ui.GateSymbol;
 import org.redfx.strangefx.ui.QubitBoard;
 import org.redfx.strangefx.ui.QubitFlow;
 
-import javafx.collections.ObservableList;
+//import javafx.collections.ObservableList;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.Node;
 
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class XMLDocument {
@@ -48,13 +50,19 @@ public class XMLDocument {
  * – Program: describes algorithms and bring them
  *   together into program libraries;
  */
-	private final QubitBoard board;
+	private final VBox board;
 	private final Document doc;
 	private final List<String> addedGates = new ArrayList();
 	
-	public XMLDocument(QubitBoard board) {
+	public XMLDocument(VBox board,HashMap meta) {
 		this.board = board;
-		ObservableList<QubitFlow> wires = board.getWires();
+		ArrayList<QubitFlow> wires = new ArrayList<QubitFlow>();
+		for (Node n : board.getChildrenUnmodifiable()) {
+			if (n instanceof QubitFlow) {
+				wires.add((QubitFlow)n);
+			}
+		}
+		//ObservableList<QubitFlow> wires = board.getWires();
 		int qnum = wires.size();
 		int snum = wires.get(0).getGateRow().getChildrenUnmodifiable().size();
 		Document temp_doc = null;
@@ -74,7 +82,14 @@ public class XMLDocument {
 		//Element rootElement = document.getDocumentElement();
         Element rootElement = doc.createElement("QIS");  // NS("urn:qis","qis:QIS");
         doc.appendChild(rootElement);
-
+		Element qcapp = doc.createElement("qcapp");
+		rootElement.appendChild(qcapp);
+		Element languages = doc.createElement("languages");
+		qcapp.appendChild(languages);
+		Element java = doc.createElement("java");
+		languages.appendChild(java);
+		Element python = doc.createElement("python");
+		languages.appendChild(python);
         Element circuit = doc.createElementNS("urn:qis:circuit:1_0","c:Circuit");
         circuit.setAttribute("size",Integer.toString(snum));
         rootElement.appendChild(circuit);

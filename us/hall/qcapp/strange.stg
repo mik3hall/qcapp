@@ -41,3 +41,8 @@ import org.redfx.strange.gate.$it$;
 addSteps(namesList) ::= <<
 	program.addSteps($namesList; separator=", "$);
 >>
+
+execute() ::= <<
+		QuantumExecutionEnvironment qee = new SimpleQuantumExecutionEnvironment();
+        Result result = qee.runProgram(program);
+>>

@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -56,6 +57,8 @@ public class Controller implements Initializable
 	@FXML 
 	private TextField xmlFileName;
 
+	HashMap<String, String> meta = new HashMap<String, String>();
+	
     public void appendText(String valueOf) {
     	sb.append(valueOf);
     	if (valueOf.endsWith("\n")) {
@@ -80,6 +83,11 @@ public class Controller implements Initializable
 		return displayPane;
 	}
 	
+	protected HashMap<String, String> getMeta() {
+		meta.put("render",Boolean.toString(renderOpt.isSelected()));
+		return meta;
+	}
+	
 	private ObservableList<Node> emptyPane = null;
 	
     @Override
@@ -94,6 +102,7 @@ public class Controller implements Initializable
         System.setOut(new PrintStream(out, true));
         System.setErr(new PrintStream(out, true));
         console.setEditable(false);
+        //renderOpt.setSelected(false);
         new Runnable() {
             @Override
             public void run() {
@@ -115,6 +124,12 @@ public class Controller implements Initializable
 				}
 				catch (IOException ioex) { ioex.printStackTrace(); }
 			}});
+    }
+    
+    public void initializeControls() {
+    	displayName.setPromptText("Quantum Circuit");
+    	className.setPromptText("org.qcapp.Main");
+    	displayPane.requestFocus();
     }
     
     void setPrimaryStage(Stage primaryStage) {

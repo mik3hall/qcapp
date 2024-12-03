@@ -36,6 +36,7 @@ import org.redfx.strangefx.ui.QubitBoard;
 
 public class QuantumJava extends Application {
 
+	private static QiskitProcess qiskit;
 	private final static MethodHandles.Lookup publicLookup = MethodHandles.publicLookup();
 	private final static MethodType mtype = MethodType.methodType(void.class, String[].class);
 	private final static HashMap<String, Class> classes = new HashMap();
@@ -48,7 +49,7 @@ public class QuantumJava extends Application {
     //private FXMLLoader iLoader = null;		// Import option FXML loader
     //private FXMLLoader exLoader = null;     // Export option FXML loader
 	AnchorPane exportRoot = null; 
-
+	
     static {
     	classes.put("CH02 hellostrange", org.redfx.javaqc.ch02.hellostrange.Main.class);
     	classes.put("CH03 paulix", org.redfx.javaqc.ch03.paulix.Main.class);
@@ -88,6 +89,7 @@ public class QuantumJava extends Application {
     	classes.put("CH11 classicfactor", com.javaqc.ch11.classicfactor.Main.class);
     	classes.put("CH11 quantumfactor", com.javaqc.ch11.quantumfactor.Main.class);
     	classes.put("CH11 semiclassicfactor", com.javaqc.ch11.semiclassicfactor.Main.class);
+    	Runtime.getRuntime().addShutdownHook(new Completion());
     }
     private static Controller controller = null; 
     //private static ImportController importController = new ImportController(); 
@@ -115,6 +117,7 @@ public class QuantumJava extends Application {
             primaryStage.setScene(scene);
             primaryStage.show();
             controller.setPrimaryStage(primaryStage);
+            controller.initializeControls();
         } catch(Exception e) {
             e.printStackTrace();
         }
@@ -222,7 +225,7 @@ public class QuantumJava extends Application {
 			});
 */		
 			//XMLParser parser = new XMLParser(selectedFile);
-//		});
+//		});		
 		MenuItem exportItem = new MenuItem("Export...");
 		exportItem.setOnAction((e) -> {
 			FileChooser fileChooser = new FileChooser();
@@ -246,11 +249,13 @@ public class QuantumJava extends Application {
 						}
 					}
 					//exstage.show();
-					byte[] b = new XMLDocument((QubitBoard)getController().
-									getDisplayPane().
-					                getChildren()).
-									toString().
-									getBytes();
+					XMLDocument doc = new XMLDocument((VBox)controller.
+													  getDisplayContainer().
+													  getChildren().get(0),
+													  controller.getMeta());
+					byte[] b = doc.
+							   toString().
+							   getBytes();
 					Files.write(outxml,b);
 				} 
 				catch (IOException ioex) {
@@ -269,6 +274,17 @@ public class QuantumJava extends Application {
 			File selectedFile = fileChooser.showOpenDialog(stage);
 			if (selectedFile != null) {
 				System.out.println("selectedFile " + selectedFile);
+				if (selectedFile.toString().endsWith(".py")) {
+					//new QiskitProgram();
+					qiskit = new QiskitProcess();
+					qiskit.read("python3 " + selectedFile);
+					//qiskit.read("print('Hello, World!')");
+					//StringBuilder cmd = new StringBuilder("exec(open(\"");
+					//cmd.append(selectedFile.toString());
+					//cmd.append("\").read(), globals())");
+					//qiskit.read(cmd.toString());
+					return;
+				}
 				spgm = new StrangeProgram(selectedFile);
 				/**
 				 * TODO the program shouldn't be processed on event thread?
@@ -280,8 +296,20 @@ public class QuantumJava extends Application {
 				exportItem.setDisable(false);
 			}
 		});
-		fileMenu.getItems().addAll(openItem, new SeparatorMenuItem(), importItem,
-			exportItem);
+		Menu openAsMenu = new Menu("Open As...");
+		MenuItem openAsJava = new MenuItem("Java");
+		MenuItem openAsPython = new MenuItem("Python");
+		openAsMenu.getItems().addAll(openAsJava, openAsPython);
+		MenuItem saveItem = new MenuItem("Save...");
+		saveItem.setOnAction((e) -> {
+			System.out.println("Save not currently supported");
+		});
+		Menu saveAsMenu = new Menu("Save As...");
+		MenuItem saveJavaItem = new MenuItem("Java");
+		MenuItem savePythonItem = new MenuItem("Python");
+		saveAsMenu.getItems().addAll(saveJavaItem, savePythonItem);
+		fileMenu.getItems().addAll(openItem, openAsMenu, saveItem, saveAsMenu, 
+			new SeparatorMenuItem(), importItem, exportItem);
 		menuBar.getMenus().addAll(fileMenu, bookMenu);
 		List<MenuItem> items = bookMenu.getItems();
 		for (MenuItem item : items) {
@@ -319,4 +347,11 @@ public class QuantumJava extends Application {
     public static void main(String[] args) {
         launch(args);
     }
+    
+    static class Completion extends Thread {
+  		
+  		public void run() {
+ 			qiskit.read("complete");  		    
+  		}
+  	}
 }

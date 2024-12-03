@@ -1,0 +1,40 @@
+group qiskit;
+
+
+launch(path) ::= <<
+#!/bin/bash
+set -x  # Enable tracing
+     
+python3 -m venv $path$
+
+source $path$/bin/activate
+
+pip install qiskit
+
+pip install qiskit-ibm-runtime
+
+pip install 'qiskit[visualization]'
+
+pip install qiskit-aer
+
+echo "Qiskit Initialization Complete"
+
+while IFS= read -r command; do
+  if [ "@command" == "complete" ]; then
+    break
+  fi
+  `@command`
+done
+>>
+
+sourceIn(nqbit) ::= <<
+from qiskit import QuantumCircuit, transpile
+from qiskit_aer import AerSimulator
+from qiskit.visualization import plot_histogram
+
+# Use Aer's AerSimulator
+simulator = AerSimulator()
+
+# Create a Quantum Circuit acting on the q register
+circuit = QuantumCircuit(2, 2)
+>>

@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <QIS>
+    <qcapp>
+        <languages>
+            <java/>
+            <python/>
+        </languages>
+    </qcapp>
     <g:Gate xmlns:g="urn:qis:gate:1_0">
         <r:Identification xmlns:r="urn:qis:reusable:1_0">P</r:Identification>
         <g:Name>ProbabilitiesGate</g:Name>
@@ -34,7 +40,7 @@
     <c:Circuit size="5" xmlns:c="urn:qis:circuit:1_0">
         <c:Step>
             <c:Operation>
-                <c:Map input="1" qubit="1"/>
+                <c:Map input="1" qubit="0"/>
                 <c:GateRef xmlns:c="urn:qis:reusable:1_0">
                     <r:Identification xmlns:r="urn:qis:reusable:1_0">P</r:Identification>
                 </c:GateRef>
@@ -42,13 +48,13 @@
         </c:Step>
         <c:Step>
             <c:Operation>
-                <c:Map input="1" qubit="1"/>
+                <c:Map input="1" qubit="0"/>
                 <c:GateRef xmlns:c="urn:qis:reusable:1_0">
                     <r:Identification xmlns:r="urn:qis:reusable:1_0">H</r:Identification>
                 </c:GateRef>
             </c:Operation>
             <c:Operation>
-                <c:Map input="1" qubit="4"/>
+                <c:Map input="1" qubit="3"/>
                 <c:GateRef xmlns:c="urn:qis:reusable:1_0">
                     <r:Identification xmlns:r="urn:qis:reusable:1_0">X</r:Identification>
                 </c:GateRef>
@@ -56,7 +62,7 @@
         </c:Step>
         <c:Step>
             <c:Operation>
-                <c:Map input="1" qubit="1"/>
+                <c:Map input="1" qubit="0"/>
                 <c:GateRef xmlns:c="urn:qis:reusable:1_0">
                     <r:Identification xmlns:r="urn:qis:reusable:1_0">P</r:Identification>
                 </c:GateRef>
@@ -64,8 +70,8 @@
         </c:Step>
         <c:Step>
             <c:Operation>
-                <c:Map input="1" qubit="1"/>
-                <c:Map input="2" qubit="2"/>
+                <c:Map input="1" qubit="0"/>
+                <c:Map input="2" qubit="1"/>
                 <c:GateRef xmlns:c="urn:qis:reusable:1_0">
                     <r:Identification xmlns:r="urn:qis:reusable:1_0">Cnot</r:Identification>
                 </c:GateRef>
@@ -73,7 +79,7 @@
         </c:Step>
         <c:Step>
             <c:Operation>
-                <c:Map input="1" qubit="1"/>
+                <c:Map input="1" qubit="0"/>
                 <c:GateRef xmlns:c="urn:qis:reusable:1_0">
                     <r:Identification xmlns:r="urn:qis:reusable:1_0">P</r:Identification>
                 </c:GateRef>
