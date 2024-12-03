@@ -5,6 +5,11 @@ Incomplete at this point.
 
 Written in Java but developed and currently only tested on MacOS.
 
+NOTE: One bug to be aware of with the latest updates is that it doesn't disconnect it's python process which prevents shutdown.
+I've been testing with open of qiskit1.py. It's pretty verbose but does seem to work.
+I have been force quiting from the Activity Monitor application to exit the application after doing that.
+_______________________________________
+
 This is based on the book "Quantum Computing in Action" - Johan Vos, and related code. 
 
 [Quantum Computing in Action - Amazon](https://www.amazon.com/Quantum-Computing-Developers-Johan-Vos/dp/1617296325)
