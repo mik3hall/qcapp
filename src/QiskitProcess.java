@@ -24,12 +24,14 @@ public class QiskitProcess {
 	//private OutWaiter waiter = null;
 	private	PrintStream out = System.out;
 	private boolean qiskitReady = false;
+	private Path env = null;
+	StringTemplateGroup stg = null;
 	
 	public QiskitProcess() {
 		p = init();
-		procout = new PrintStream(p.getOutputStream());
-		new OutThread(p.getInputStream(),"QiskitOutThread",out).start();
-		new OutThread(p.getErrorStream(),"QiskitErrThread",out).start();
+//		procout = new PrintStream(p.getOutputStream());
+//		new OutThread(p.getInputStream(),"QiskitOutThread",out).start();
+//		new OutThread(p.getErrorStream(),"QiskitErrThread",out).start();
 		/*
 		waiter = new OutWaiter(p, out);
 		synchronized (waiter) { 
@@ -41,9 +43,9 @@ public class QiskitProcess {
 			}
 		}
 		*/
+		/*
 		final BufferedReader procin =  
 			new BufferedReader(new InputStreamReader(p.getInputStream()));	
-		/*
 		new Thread(new Runnable() {
 			public void run() {
 				String line = null;
@@ -70,33 +72,100 @@ public class QiskitProcess {
 		*/
 	}
 
-	public void read(String read) {
-		System.out.println(read);
+	public void qiskitRun(String script) {
+		System.out.println(script);
+		StringTemplate executeT = stg.getInstanceOf("execute");
+		executeT.setAttribute("venvPath", env.toString());
+		executeT.setAttribute("script", script);
+		try {
+			Path qiskitScript = Files.createTempFile("qiskit_script", ".sh");
+			Set<PosixFilePermission> permissions = Files.getPosixFilePermissions(qiskitScript);
+			permissions.add(PosixFilePermission.OWNER_EXECUTE);
+			Files.setPosixFilePermissions(qiskitScript, permissions);
+			FileWriter fileWriter = new FileWriter(qiskitScript.toString(), true);   
+			BufferedWriter bw = new BufferedWriter(fileWriter);
+			System.out.println(executeT);
+			bw.write(executeT.toString());
+			bw.close();
+			String result = rtexec(new String[] { qiskitScript.toString() }, true);
+			//System.out.println(result);
+		}
+		catch (IOException ioex) { ioex.printStackTrace(); }
+		/*
 		procout.println(read);
 		procout.flush();
+		synchronized(this) {
+			try {
+				Thread.currentThread().sleep(15);			
+			}
+			catch (InterruptedException iex) {}
+
+		}
+		procout.println("complete");
+		procout.flush();
+		*/
 	}
 	
+	private static String rtexec(String[] args, boolean echo) {
+       try {
+           StringBuffer execout = new StringBuffer();
+           Process proc = Runtime.getRuntime().exec(args);
+           proc.waitFor();
+           InputStream inout = proc.getInputStream();
+           InputStream inerr = proc.getErrorStream();
+           byte []buffer = new byte[256];
+           while (true) {
+               int stderrLen = inerr.read(buffer, 0, buffer.length);
+               if (stderrLen > 0) {
+               	   if (echo) {
+               	   	System.out.println(new String(buffer,0,stderrLen));
+               	   }
+               	   else {
+                   	execout.append(new String(buffer,0,stderrLen)); 
+                   }                  
+               }
+               int stdoutLen = inout.read(buffer, 0, buffer.length);
+               if (stdoutLen > 0) {
+               	   if (echo) {
+               	   	System.out.println(new String(buffer,0,stdoutLen));
+               	   }
+               	   else {
+                   	execout.append(new String(buffer,0,stdoutLen));
+                   }
+               }
+               if (stderrLen < 0 && stdoutLen < 0)
+                   break;
+           }   
+           return execout.toString();
+       }
+       catch(Throwable tossed) { tossed.printStackTrace(); }
+       return "-";
+    }
+   
 	private final Process init() {
 		ProcessBuilder pb; 
 		try {
-			Path env = Files.createTempDirectory("python_env");
+			env = Files.createTempDirectory("python_env");
 			Path initScript = Files.createTempFile("init_script", ".sh");
 			Set<PosixFilePermission> permissions = Files.getPosixFilePermissions(initScript);
             permissions.add(PosixFilePermission.OWNER_EXECUTE);
             Files.setPosixFilePermissions(initScript, permissions);
-			pb = new ProcessBuilder(new String[] { "bash", "-v", initScript.toString() });
-			//pb = new ProcessBuilder(initScript.toString());
+			//pb = new ProcessBuilder(new String[] { "bash", "-v", initScript.toString() });
+			pb = new ProcessBuilder(initScript.toString());
 			ClassLoader cl = getClass().getClassLoader();
 			InputStream is = getClass().getResourceAsStream("qiskit.stg");
-			StringTemplateGroup stg = new StringTemplateGroup(new InputStreamReader(is),DefaultTemplateLexer.class);
+			stg = new StringTemplateGroup(new InputStreamReader(is),DefaultTemplateLexer.class);
 			StringTemplate launchT = stg.getInstanceOf("launch");
 			launchT.setAttribute("path",env.toString());
 			FileWriter fileWriter = new FileWriter(initScript.toString(), true);   
     		BufferedWriter bw = new BufferedWriter(fileWriter);
     		System.out.println(launchT);
-    		bw.write(launchT.toString().replace('@','$'));
+    		bw.write(launchT.toString()); // .replace('@','$'));
     		bw.close();
-			return pb.start();
+    		String result = rtexec(new String[] { initScript.toString() }, true);
+    		//System.out.println(result);
+    		return null;
+			//return pb.start();
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();

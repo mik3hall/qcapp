@@ -3,7 +3,6 @@ group qiskit;
 
 launch(path) ::= <<
 #!/bin/bash
-set -x  # Enable tracing
      
 python3 -m venv $path$
 
@@ -17,14 +16,18 @@ pip install 'qiskit[visualization]'
 
 pip install qiskit-aer
 
-echo "Qiskit Initialization Complete"
+echo "Qiskit venv Initialization Complete"
+>>
 
-while IFS= read -r command; do
-  if [ "@command" == "complete" ]; then
-    break
-  fi
-  `@command`
-done
+execute(venvPath, script) ::= <<
+#!/bin/bash
+
+# Activate the virtual environment
+source $venvPath$/bin/activate
+
+# Run your Python script
+python3 $script$
+
 >>
 
 sourceIn(nqbit) ::= <<

@@ -6,5 +6,5 @@
 <AnchorPane xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="us.hall.qcapp.Console"> 
    <children>
       <TextArea fx:id="console" prefHeight="512.0" prefWidth="1024.0" /> 
-   </children>
+   </children> 
 </AnchorPane>

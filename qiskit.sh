@@ -1,5 +1,5 @@
 #!/bin/bash
-set -x  # Enable tracing
+#set -x  # Enable tracing
 
 python3 -m venv /Users/mjh/Documents/physics/quantumjava/qiskit_venv
 

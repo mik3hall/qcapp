@@ -36,7 +36,6 @@ import org.redfx.strangefx.ui.QubitBoard;
 
 public class QuantumJava extends Application {
 
-	private static QiskitProcess qiskit;
 	private final static MethodHandles.Lookup publicLookup = MethodHandles.publicLookup();
 	private final static MethodType mtype = MethodType.methodType(void.class, String[].class);
 	private final static HashMap<String, Class> classes = new HashMap();
@@ -49,6 +48,7 @@ public class QuantumJava extends Application {
     //private FXMLLoader iLoader = null;		// Import option FXML loader
     //private FXMLLoader exLoader = null;     // Export option FXML loader
 	AnchorPane exportRoot = null; 
+	private QiskitProcess qiskit = null;
 	
     static {
     	classes.put("CH02 hellostrange", org.redfx.javaqc.ch02.hellostrange.Main.class);
@@ -276,8 +276,11 @@ public class QuantumJava extends Application {
 				System.out.println("selectedFile " + selectedFile);
 				if (selectedFile.toString().endsWith(".py")) {
 					//new QiskitProgram();
-					qiskit = new QiskitProcess();
-					qiskit.read("python3 " + selectedFile);
+					if (qiskit == null) {
+						qiskit = new QiskitProcess();
+					}
+					System.out.println("Invoking qiskitRun");
+					qiskit.qiskitRun(selectedFile.toString());
 					//qiskit.read("print('Hello, World!')");
 					//StringBuilder cmd = new StringBuilder("exec(open(\"");
 					//cmd.append(selectedFile.toString());
@@ -351,7 +354,6 @@ public class QuantumJava extends Application {
     static class Completion extends Thread {
   		
   		public void run() {
- 			qiskit.read("complete");  		    
   		}
   	}
 }
