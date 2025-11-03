@@ -16,6 +16,8 @@ construction of the quantum circuit.
 The application is written in Java but is being developed and currently only tested on MacOS. A Unix version should be doable, but I'm not sure 
 how some of the shell script based would be handled on Windows. I'll add having a linux app version to the to-do list.
 
+Anyhow it's still very much a work in progress that I'm not going to try and do a lot of 
+cleanup or explaining now. 
 
 _______________________________________
 
