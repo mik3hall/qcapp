@@ -30,6 +30,7 @@ public class XMLParser extends DefaultHandler {
 	private final HashMap<String, GateDefinition>gates = new HashMap<String, GateDefinition>();
 	private final ArrayList<String> gateNames = new ArrayList<String>();
 	private final ArrayList<Operation>steps = new ArrayList<Operation>();
+	private static final boolean verbose = false;
 	
 	private enum ElementType {
 		GateType,
@@ -96,19 +97,27 @@ public class XMLParser extends DefaultHandler {
 	}
 	
 	public void startDocument() throws SAXException {
-		System.out.println("startDocument");
+		if (verbose) {
+			System.out.println("startDocument");
+		}
 	}
 	
 	public void endDocument() throws SAXException {
-		System.out.println("endDocument");
+		if (verbose) {
+			System.out.println("endDocument");
+		}
 	}
 	
 	public void startPrefixMapping(String prefix, String uri) throws SAXException {
-		System.out.println("startPrefixMapping: " + prefix + " " + uri);
+		if (verbose) {
+			System.out.println("startPrefixMapping: " + prefix + " " + uri);
+		}
 	}
 	
 	public void endPrefixMapping(String prefix) throws SAXException {
-		System.out.println("endPrefixMapping");
+		if (verbose) {
+			System.out.println("endPrefixMapping");
+		}
 	}
 
 	public InputSource resolveEntity(String publicID, String systemID) throws SAXException, IOException {
@@ -125,7 +134,9 @@ public class XMLParser extends DefaultHandler {
 	}
 	
 	public void startElement(String namespaceURI, String localName, String qualifiedName, Attributes attrs) throws SAXException {
-		System.out.println("XML startElement(" + namespaceURI + ") local: " + localName + " qualified: " + qualifiedName);
+		if (verbose) {
+			System.out.println("XML startElement(" + namespaceURI + ") local: " + localName + " qualified: " + qualifiedName);
+		}
 		switch(qualifiedName) {
 			case CIRCUIT:
 				circuit = new Circuit();
@@ -141,13 +152,13 @@ public class XMLParser extends DefaultHandler {
 			case GATE:
 				elementType = ElementType.GateType;
 				currentGateDef = new GateDefinition();
+				dim++;			// increment program dimensions
 				break;
 			case GATEREF:
 				elementType = ElementType.GateRefType;
 				break;
 			case STEP:
 				elementType = ElementType.StepType;
-				dim++;			// increment program dimensions
 				currentStep = new Step();
 				break;
 			case OPERATION:
@@ -199,12 +210,16 @@ public class XMLParser extends DefaultHandler {
 				break;
 			case TRANSFORMATION:
 				if (attrs.getLength() > 0) {
-					System.out.println("\tAttributes:");
+					if (verbose) {
+						System.out.println("\tAttributes:");
+					}
 					for (int i = 0; i < attrs.getLength(); i++) {
 						if (attrs.getQName(i).equals("size")) {
 							currentGateDef.setSize(Integer.parseInt(attrs.getValue(i)));
 						}
-						System.out.println("\t\t" + attrs.getQName(i) + " = " + attrs.getValue(i));
+						if (verbose) {
+							System.out.println("\t\t" + attrs.getQName(i) + " = " + attrs.getValue(i));
+						}
 					}	
 				}
 				else {
@@ -216,12 +231,17 @@ public class XMLParser extends DefaultHandler {
 	}
 	
 	public void endElement(String namespaceURI, String localName, String qualifiedName) throws SAXException {
-		System.out.println("XML endElement(" + namespaceURI + ") local: " + localName + " qualified: " + qualifiedName);
+		if (verbose) {
+			System.out.println("XML endElement(" + namespaceURI + ") local: " + 
+				localName + " qualified: " + qualifiedName);
+		}
 		try {
 			switch(qualifiedName) {
 				case NAME:
 					name = accum.toString().trim();
-					System.out.println("Name: " + name);
+					if (verbose) {
+						System.out.println("Name: " + name);
+					}
 					if (elementType == ElementType.GateType) {
 						currentGateDef.setName(accum.toString().trim());
 					}
@@ -229,7 +249,9 @@ public class XMLParser extends DefaultHandler {
 					break;
 				case IDENTIFICATION:
 					identification = accum.toString().trim();
-					System.out.println("Identification: " + identification);
+					if (verbose) {
+						System.out.println("Identification: " + identification);
+					}
 					if (elementType == ElementType.GateType) {
 						currentGateDef.setIdentification(accum.toString().trim());
 					}
@@ -253,7 +275,10 @@ public class XMLParser extends DefaultHandler {
         catch (Throwable tossed) {
         	tossed.printStackTrace(); 
         }
-		System.out.println("endElement(" + namespaceURI + ") local: " + localName + " qualified: " + qualifiedName);
+        if (verbose) {
+			System.out.println("endElement(" + namespaceURI + ") local: " + localName + 
+				" qualified: " + qualifiedName);
+		}
 	}
 	
 	public void characters(char[] ch, int start, int length) throws SAXException {
@@ -271,10 +296,14 @@ public class XMLParser extends DefaultHandler {
 	}
 	
 	public void processingInstruction(String target, String data) throws SAXException {
-		System.out.println("processingInstruction: " + target + " = " + data);
+		if (verbose) {
+			System.out.println("processingInstruction: " + target + " = " + data);
+		}
 	}
 	
 	public void skippedEntity(String name) throws SAXException {
-		System.out.println("skippedEntity: " + name);
+		if (verbose) {
+			System.out.println("skippedEntity: " + name);
+		}
 	}
 }

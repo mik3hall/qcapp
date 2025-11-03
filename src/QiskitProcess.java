@@ -10,6 +10,7 @@ import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.PosixFilePermission;
 import java.util.Set;
 import org.antlr.stringtemplate.StringTemplate;
@@ -24,7 +25,7 @@ public class QiskitProcess {
 	//private OutWaiter waiter = null;
 	private	PrintStream out = System.out;
 	private boolean qiskitReady = false;
-	private Path env = null;
+	private Path env = null, wrapperPath = null;
 	StringTemplateGroup stg = null;
 	
 	public QiskitProcess() {
@@ -76,6 +77,7 @@ public class QiskitProcess {
 		System.out.println(script);
 		StringTemplate executeT = stg.getInstanceOf("execute");
 		executeT.setAttribute("venvPath", env.toString());
+		executeT.setAttribute("wrapperPath", wrapperPath.toString());
 		executeT.setAttribute("script", script);
 		try {
 			Path qiskitScript = Files.createTempFile("qiskit_script", ".sh");
@@ -84,10 +86,14 @@ public class QiskitProcess {
 			Files.setPosixFilePermissions(qiskitScript, permissions);
 			FileWriter fileWriter = new FileWriter(qiskitScript.toString(), true);   
 			BufferedWriter bw = new BufferedWriter(fileWriter);
+			Path xml = Files.createTempFile("xmlout",".xml");
+			executeT.setAttribute("xmlfile", xml.toString());
 			System.out.println(executeT);
 			bw.write(executeT.toString());
 			bw.close();
 			String result = rtexec(new String[] { qiskitScript.toString() }, true);
+			System.out.println(xml + " " + Files.size(xml));
+			new StrangeProgram(xml.toFile());
 			//System.out.println(result);
 		}
 		catch (IOException ioex) { ioex.printStackTrace(); }
@@ -143,6 +149,7 @@ public class QiskitProcess {
     }
    
 	private final Process init() {
+		InputStream is = null;
 		ProcessBuilder pb; 
 		try {
 			env = Files.createTempDirectory("python_env");
@@ -152,8 +159,7 @@ public class QiskitProcess {
             Files.setPosixFilePermissions(initScript, permissions);
 			//pb = new ProcessBuilder(new String[] { "bash", "-v", initScript.toString() });
 			pb = new ProcessBuilder(initScript.toString());
-			ClassLoader cl = getClass().getClassLoader();
-			InputStream is = getClass().getResourceAsStream("qiskit.stg");
+			is = getClass().getResourceAsStream("qiskit.stg");
 			stg = new StringTemplateGroup(new InputStreamReader(is),DefaultTemplateLexer.class);
 			StringTemplate launchT = stg.getInstanceOf("launch");
 			launchT.setAttribute("path",env.toString());
@@ -163,12 +169,30 @@ public class QiskitProcess {
     		bw.write(launchT.toString()); // .replace('@','$'));
     		bw.close();
     		String result = rtexec(new String[] { initScript.toString() }, true);
+    		is = getClass().getResourceAsStream("wrapper.py");
+    		if (is == null) {
+				// Handle case where resource is not found
+				System.err.println("Resource not found: wrapper.py");
+			}
+			wrapperPath = Files.createTempFile("wrapper", ".py");
+			Files.copy(is, wrapperPath, StandardCopyOption.REPLACE_EXISTING);
+			is.close();
+			return null;
     		//System.out.println(result);
-    		return null;
 			//return pb.start();
 		}
 		catch (Exception ex) {
-			ex.printStackTrace();
+			if (is != null) {
+				try {
+					is.close();
+				}
+				catch (IOException ioex) {
+					ioex.printStackTrace();
+				}
+			}
+			else {
+				ex.printStackTrace();
+			}
 		}
 		throw new IllegalStateException("Failed to initialize QISKit python environment");
 	}	

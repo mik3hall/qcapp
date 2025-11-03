@@ -147,6 +147,7 @@ public class XMLDocument {
 			gate.appendChild(name);
 			Complex[][] matrix = g.getMatrix();
 			if (matrix.length > 0) {
+				System.out.print(g.getCaption() + " ");
 				appendTransformation(gate, matrix);
 			}
 			doc.getDocumentElement().insertBefore(gate, circuit);
@@ -165,16 +166,12 @@ public class XMLDocument {
 				String r = Integer.toString(i+1);
 				for (int j=0; j<matrix[0].length; j++) {
 					String c = Integer.toString(j+1);
-					if (matrix[i][j].r > 0 || matrix[i][j].i > 0) { 
+					if (matrix[i][j].r != 0f || matrix[i][j].i != 0f) { 
 						Element cell = doc.createElement("Cell");
 						cell.setAttribute("row",r);
 						cell.setAttribute("col",c);
-						if (matrix[i][j].r > 0) {
-							cell.setAttribute("r",Float.toString(matrix[i][j].r));
-						}
-						if (matrix[i][j].i > 0) {
-							cell.setAttribute("c",Float.toString(matrix[i][j].i));
-						}
+						cell.setAttribute("real",Float.toString(matrix[i][j].r));
+						cell.setAttribute("complex",Float.toString(matrix[i][j].i)+"j");
 						tran.appendChild(cell);
 					}
 				}

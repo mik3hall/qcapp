@@ -22,11 +22,12 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.lang.invoke.*;
 import java.util.HashMap;
@@ -273,14 +274,29 @@ public class QuantumJava extends Application {
 			fileChooser.setTitle("Open QC Strange Program");
 			File selectedFile = fileChooser.showOpenDialog(stage);
 			if (selectedFile != null) {
-				System.out.println("selectedFile " + selectedFile);
 				if (selectedFile.toString().endsWith(".py")) {
 					//new QiskitProgram();
-					if (qiskit == null) {
-						qiskit = new QiskitProcess();
+					try {
+						List<String> lines = Files.readAllLines(selectedFile.toPath());
+						lines.add(0,"import xml.etree.ElementTree as ET");
+						Path tempScript = Files.createTempFile("script", ".py");
+						for (String line: lines) {
+							if (line.contains("QuantumCircuit(")) {
+								String label = line.substring(0,line.indexOf("=")).trim();
+								System.out.println("label = " + label);
+							}
+						}
+						Path testScript = Paths.get("/Users/mjh/Documents/physics/quantumjava/test.txt");
+						Files.write(testScript,lines,Charset.defaultCharset());
+						if (qiskit == null) {
+							qiskit = new QiskitProcess();
+						}
+						System.out.println("Invoking qiskitRun");
+						qiskit.qiskitRun(selectedFile.toString());
 					}
-					System.out.println("Invoking qiskitRun");
-					qiskit.qiskitRun(selectedFile.toString());
+					catch (IOException ioex) {
+						ioex.printStackTrace();
+					}
 					//qiskit.read("print('Hello, World!')");
 					//StringBuilder cmd = new StringBuilder("exec(open(\"");
 					//cmd.append(selectedFile.toString());

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<QIS>
+    <qcapp>
+        <languages>
+            <java/>
+            <python/>
+        </languages>
+    </qcapp>
+    <g:Gate xmlns:g="urn:qis:gate:1_0">
+        <r:Identification xmlns:r="urn:qis:reusable:1_0">P</r:Identification>
+        <g:Name>ProbabilitiesGate</g:Name>
+    </g:Gate>
+    <g:Gate xmlns:g="urn:qis:gate:1_0">
+        <r:Identification xmlns:r="urn:qis:reusable:1_0">H</r:Identification>
+        <g:Name>Hadamard</g:Name>
+        <r:Transformation size="1" xmlns:r="urn:qis:reusable:1_0">
+            <Cell col="1" complex="0.0j" real="0.70710677" row="1"/>
+            <Cell col="2" complex="0.0j" real="0.70710677" row="1"/>
+            <Cell col="1" complex="0.0j" real="0.70710677" row="2"/>
+            <Cell col="2" complex="0.0j" real="-0.70710677" row="2"/>
+        </r:Transformation>
+    </g:Gate>
+    <g:Gate xmlns:g="urn:qis:gate:1_0">
+        <r:Identification xmlns:r="urn:qis:reusable:1_0">X</r:Identification>
+        <g:Name>X</g:Name>
+        <r:Transformation size="1" xmlns:r="urn:qis:reusable:1_0">
+            <Cell col="2" complex="0.0j" real="1.0" row="1"/>
+            <Cell col="1" complex="0.0j" real="1.0" row="2"/>
+        </r:Transformation>
+    </g:Gate>
+    <g:Gate xmlns:g="urn:qis:gate:1_0">
+        <r:Identification xmlns:r="urn:qis:reusable:1_0">Cnot</r:Identification>
+        <g:Name>Cnot</g:Name>
+        <r:Transformation size="2" xmlns:r="urn:qis:reusable:1_0">
+            <Cell col="1" complex="0.0j" real="1.0" row="1"/>
+            <Cell col="2" complex="0.0j" real="1.0" row="2"/>
+            <Cell col="4" complex="0.0j" real="1.0" row="3"/>
+            <Cell col="3" complex="0.0j" real="1.0" row="4"/>
+        </r:Transformation>
+    </g:Gate>
+    <c:Circuit size="5" xmlns:c="urn:qis:circuit:1_0">
+        <c:Step>
+            <c:Operation>
+                <c:Map input="1" qubit="0"/>
+                <c:GateRef xmlns:c="urn:qis:reusable:1_0">
+                    <r:Identification xmlns:r="urn:qis:reusable:1_0">P</r:Identification>
+                </c:GateRef>
+            </c:Operation>
+        </c:Step>
+        <c:Step>
+            <c:Operation>
+                <c:Map input="1" qubit="0"/>
+                <c:GateRef xmlns:c="urn:qis:reusable:1_0">
+                    <r:Identification xmlns:r="urn:qis:reusable:1_0">H</r:Identification>
+                </c:GateRef>
+            </c:Operation>
+            <c:Operation>
+                <c:Map input="1" qubit="3"/>
+                <c:GateRef xmlns:c="urn:qis:reusable:1_0">
+                    <r:Identification xmlns:r="urn:qis:reusable:1_0">X</r:Identification>
+                </c:GateRef>
+            </c:Operation>
+        </c:Step>
+        <c:Step>
+            <c:Operation>
+                <c:Map input="1" qubit="0"/>
+                <c:GateRef xmlns:c="urn:qis:reusable:1_0">
+                    <r:Identification xmlns:r="urn:qis:reusable:1_0">P</r:Identification>
+                </c:GateRef>
+            </c:Operation>
+        </c:Step>
+        <c:Step>
+            <c:Operation>
+                <c:Map input="1" qubit="0"/>
+                <c:Map input="2" qubit="1"/>
+                <c:GateRef xmlns:c="urn:qis:reusable:1_0">
+                    <r:Identification xmlns:r="urn:qis:reusable:1_0">Cnot</r:Identification>
+                </c:GateRef>
+            </c:Operation>
+        </c:Step>
+        <c:Step>
+            <c:Operation>
+                <c:Map input="1" qubit="0"/>
+                <c:GateRef xmlns:c="urn:qis:reusable:1_0">
+                    <r:Identification xmlns:r="urn:qis:reusable:1_0">P</r:Identification>
+                </c:GateRef>
+            </c:Operation>
+        </c:Step>
+    </c:Circuit>
+</QIS>

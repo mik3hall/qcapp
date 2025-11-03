@@ -1,6 +1,6 @@
 group strange;
 
-sourceIn(gateImports,nqbit) ::= <<
+sourceIn(gateImports,className,nqbit) ::= <<
 package us.hall.strange;
 
 import us.hall.qcapp.Util;
@@ -17,13 +17,13 @@ import org.redfx.strangefx.render.Renderer;
 
 import javafx.application.Platform;
 
-public class Main {
+public class $className$ {
 
-    private static final int dim = $nqbit$;
+	private static final int dim = $nqbit$;
 
-    public static void main (String[] args) {
+	public static void main (String[] args) {
         
-        Program program = new Program(dim);
+		Program program = new Program(dim);
 >>
 
 setStep(name,gate) ::= <<
@@ -43,6 +43,6 @@ addSteps(namesList) ::= <<
 >>
 
 execute() ::= <<
-		QuantumExecutionEnvironment qee = new SimpleQuantumExecutionEnvironment();
-        Result result = qee.runProgram(program);
+	QuantumExecutionEnvironment qee = new SimpleQuantumExecutionEnvironment();
+    Result result = qee.runProgram(program);
 >>

@@ -1,13 +1,22 @@
 # qcapp
 
-A application related to quantum computing.<br/>
-Incomplete at this point.
+A quantum computing simulation application originally built on the java 'strange' API indicated in the immediately following section. It has been extended with an XML import/export format for
+quantum circuits. With the current update there is additional support for using the IBM Qiskit API in python.<br/>
 
-Written in Java but developed and currently only tested on MacOS.
+This update involves the IBM qiskit python quantum computing api and the XML support. You can run qiskit code using the File menu 
+'Open...' option. Qiskit is installed to a python virtual environment. This takes a while. Subsequent executions of qiskit are faster.
+There is now has a wrapper script that activates the qiskit python virtual environment and then finds and converts the qiskit QuantumCircuit 
+to XML using python introspecition. Following that a java StrangeProgram is built from that XML to render the circuit to the application display area. Standard output from the python still appears in the console pane. 
 
-NOTE: One bug to be aware of with the latest updates is that it doesn't disconnect it's python process which prevents shutdown.
-I've been testing with open of qiskit1.py. It's pretty verbose but does seem to work.
-I have been force quiting from the Activity Monitor application to exit the application after doing that.
+This demonstrates the use of XML as an interchange format for quantum circuit api's. It could also be used as a code generator from the XML quantum circuit representation to any of these API's. So far, that would have to be only from qiskit XML to Strange, or Strange to Strange. The round trip from XML to Qiskit code still needs to be done. Once that is complete some way to indicate which API to generate code for needs to be provided. Either through the GUI interface or application specific XML meta data. 
+I don't remember exactly what I was looking at for either of these options. So, both are 
+subject to change. There is currently only basic boilerplate for any code not involving the 
+construction of the quantum circuit. 
+
+The application is written in Java but is being developed and currently only tested on MacOS. A Unix version should be doable, but I'm not sure 
+how some of the shell script based would be handled on Windows. I'll add having a linux app version to the to-do list.
+
+
 _______________________________________
 
 This is based on the book "Quantum Computing in Action" - Johan Vos, and related code. 
@@ -25,9 +34,9 @@ This also makes use of QIS-XML for converting the quantum programs/circuits to a
 
 [QIS-XML](https://arxiv.org/pdf/1106.2684)<br/>
 
-A couple, I think slightly different versios, of the PDF are included here.
+A couple, I think slightly different versions, of the PDF are included here.
 
-This attempts to make the original somewhat more IDE-like and extensible. The idea is you can open and run strange quantum java code. You can export that to an XML format. Currently in progress is reading that XML back in and generating the equivalent java source code. 
+This attempts to make the original somewhat more IDE-like and extensible. The idea is you can open and run strange quantum java code. You can export that to an XML format. That reading that XML back in and generating the equivalent java source code. 
 
 Or, the thought would be, export something else to the same common, language independent, XML format. Also, import the XML back into something other than strange java. Currently I am thinking trying to support IBM Qiskit python next. 
 
@@ -54,3 +63,4 @@ The dmg contains an old version. I will probably provide a release this way some
 
 I think this mostly explains the project current contents and it's current status. 
 
+1. 

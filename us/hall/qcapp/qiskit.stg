@@ -19,14 +19,14 @@ pip install qiskit-aer
 echo "Qiskit venv Initialization Complete"
 >>
 
-execute(venvPath, script) ::= <<
+execute(venvPath, wrapperPath, script, xmlfile) ::= <<
 #!/bin/bash
 
 # Activate the virtual environment
 source $venvPath$/bin/activate
 
 # Run your Python script
-python3 $script$
+python3 $wrapperPath$ $script$ $xmlfile$
 
 >>
 

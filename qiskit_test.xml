@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='utf-8'?>
+<QIS xmlns:c="urn:qis:circuit:1_0" xmlns:g="urn:qis:gate:1_0" xmlns:r="urn:qis:reusable:1_0">
+	<qcapp>
+		<languages>
+			<java />
+			<python />
+		</languages>
+	</qcapp>
+	<g:Gate>
+		<r:Identification>H</r:Identification>
+		<g:Name>Hadamard</g:Name>
+		<r:Transformation size="1">
+			<Cell row="1" col="1" real="0.7071067811865475" complex="0.0j" />
+			<Cell row="1" col="2" real="0.7071067811865475" complex="0.0j" />
+			<Cell row="2" col="1" real="0.7071067811865475" complex="0.0j" />
+			<Cell row="2" col="2" real="-0.7071067811865475" complex="0.0j" />
+		</r:Transformation>
+	</g:Gate>
+	<g:Gate>
+		<r:Identification>Cnot</r:Identification>
+		<g:Name>Cnot</g:Name>
+		<r:Transformation size="2">
+			<Cell row="1" col="1" real="1.0" complex="0.0j" />
+			<Cell row="2" col="4" real="1.0" complex="0.0j" />
+			<Cell row="3" col="3" real="1.0" complex="0.0j" />
+			<Cell row="4" col="2" real="1.0" complex="0.0j" />
+		</r:Transformation>
+	</g:Gate>
+	<c:Circuit size="2">
+		<c:Step>
+			<c:Operation>
+				<c:Map input="1" qubit="0" />
+				<c:GateRef>
+					<r:Identification>H</r:Identification>
+				</c:GateRef>
+			</c:Operation>
+		</c:Step>
+		<c:Step>
+			<c:Operation>
+				<c:Map input="1" qubit="0" />
+				<c:Map input="2" qubit="1" />
+				<c:GateRef>
+					<r:Identification>Cnot</r:Identification>
+				</c:GateRef>
+			</c:Operation>
+		</c:Step>
+	</c:Circuit>
+</QIS>
