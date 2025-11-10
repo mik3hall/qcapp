@@ -55,7 +55,7 @@
                 </c:GateRef>
             </c:Operation>
             <c:Operation>
-                <c:Map input="1" qubit="3"/>
+                <c:Map input="1" qubit="2"/>
                 <c:GateRef xmlns:c="urn:qis:reusable:1_0">
                     <r:Identification xmlns:r="urn:qis:reusable:1_0">X</r:Identification>
                 </c:GateRef>

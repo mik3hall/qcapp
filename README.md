@@ -3,6 +3,10 @@
 A quantum computing simulation application originally built on the java 'strange' API indicated in the immediately following section. It has been extended with an XML import/export format for
 quantum circuits. With the current update there is additional support for using the IBM Qiskit API in python.<br/>
 
+**11/09/25** xml2qis generates a simple qiskit program from XML. Starting [Google Cirq](https://quantumai.google/cirq) wrapper. Some renaming and refactoring for two different python API's. 
+A little cleanup. Leaving out application since GitHub says it's too big. I will see if I can
+include accepted releases in the next update.
+_______________________________________
 This update involves the IBM qiskit python quantum computing api and the XML support. You can run qiskit code using the File menu 
 'Open...' option. Qiskit is installed to a python virtual environment. This takes a while. Subsequent executions of qiskit are faster.
 There is now has a wrapper script that activates the qiskit python virtual environment and then finds and converts the qiskit QuantumCircuit 

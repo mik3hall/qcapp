@@ -1,0 +1,76 @@
+group qiskit;
+
+
+launch(path) ::= <<
+#!/bin/bash
+     
+python3 -m venv $path$
+
+source $path$/bin/activate
+
+pip install qiskit
+
+pip install qiskit-ibm-runtime
+
+pip install 'qiskit[visualization]'
+
+pip install qiskit-aer
+
+echo "Qiskit venv Initialization Complete"
+>>
+
+launch_cirq(path) ::= <<
+
+python3 -m venv $path$
+
+source $path$/bin/activate
+
+pip install cirq
+
+pip install 'cirq-core[contrib]'
+
+echo "Cirq venv Initialization Complete"
+>>
+ 
+execute(venvPath, wrapperPath, script, xmlfile) ::= <<
+#!/bin/bash
+
+# Activate the virtual environment
+source $venvPath$/bin/activate
+
+# Run your Python script
+python3 $wrapperPath$ $script$ $xmlfile$
+
+>>
+
+sourceIn(nqbit, circuitBuild, q2c) ::= <<
+from qiskit import QuantumCircuit, transpile
+from qiskit_aer import AerSimulator
+from qiskit.visualization import plot_histogram
+
+# Use Aer's AerSimulator
+simulator = AerSimulator()
+
+# Create a Quantum Circuit acting on the q register
+circuit = QuantumCircuit($nqbit$, $nqbit$)
+
+$circuitBuild$
+
+# Map the quantum measurement to the classical bits
+circuit.measure($q2c$)
+
+# Compile the circuit for the support instruction set (basis_gates)
+# and topology (coupling_map) of the backend
+compiled_circuit = transpile(circuit, simulator)
+
+# Execute the circuit on the aer simulator
+job = simulator.run(compiled_circuit, shots=1000)
+
+# Grab results from the job
+result = job.result()
+
+#print("result", result)
+#print("statevector",Statevector(result.get_statevector()).probabilities())
+# Returns counts
+counts = result.get_counts(compiled_circuit)
+>>

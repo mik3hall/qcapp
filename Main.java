@@ -19,13 +19,13 @@ import javafx.application.Platform;
 
 public class Main {
 
-    private static final int dim = 4;
+    private static final int dim = 3;
 
     public static void main (String[] args) {
         
         Program program = new Program(dim);
         Step p0 = new Step (new ProbabilitiesGate(0));
-        Step step0 = new Step(new Hadamard(0), new X(3));
+        Step step0 = new Step(new Hadamard(0), new X(2));
         Step p1 = new Step (new ProbabilitiesGate(0));
         Step step1 = new Step(new Cnot(0,1));
         Step p2 = new Step (new ProbabilitiesGate(0));

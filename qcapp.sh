@@ -19,9 +19,9 @@ cp split.fxml us/hall/qcapp/split.fxml
 #cp export.fxml us/hall/qcapp/export.fxml
 cp strangelogo.png us/hall/qcapp/strangelogo.png
 cp strange.stg us/hall/qcapp/strange.stg
-cp qiskit.stg us/hall/qcapp/qiskit.stg
+cp python.stg us/hall/qcapp/python.stg
 cp styles.css us/hall/qcapp/styles.css
-cp wrapper.py us/hall/qcapp/wrapper.py
+cp qiskit_wrapper.py us/hall/qcapp/qiskit_wrapper.py
 
 jar -cvf qcapp.jar us
 mv qcapp.jar input/qcapp.jar

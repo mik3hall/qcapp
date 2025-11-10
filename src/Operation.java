@@ -4,7 +4,6 @@ import java.util.ArrayList;
 	
 public class Operation {
 	ArrayList<Map> maps = new ArrayList();
-	String gateRef;
 	GateDefinition gate;
 	
 	public void addMap(Map map) {
@@ -14,14 +13,6 @@ public class Operation {
 	public ArrayList<Map> getMaps() {
 		return maps;
 	}
-	
-	public String getGateRef() {
-		return gateRef;
-	}
-	
-	public void setGateRef(String name) {
-		this.gateRef = name;
-	} 
 	
 	public GateDefinition getGate() {
 		return gate;

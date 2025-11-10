@@ -49,7 +49,7 @@ public class QuantumJava extends Application {
     //private FXMLLoader iLoader = null;		// Import option FXML loader
     //private FXMLLoader exLoader = null;     // Export option FXML loader
 	AnchorPane exportRoot = null; 
-	private QiskitProcess qiskit = null;
+	private PythonProcess pythonAPI = null;
 	
     static {
     	classes.put("CH02 hellostrange", org.redfx.javaqc.ch02.hellostrange.Main.class);
@@ -275,27 +275,15 @@ public class QuantumJava extends Application {
 			File selectedFile = fileChooser.showOpenDialog(stage);
 			if (selectedFile != null) {
 				if (selectedFile.toString().endsWith(".py")) {
-					//new QiskitProgram();
-					try {
-						List<String> lines = Files.readAllLines(selectedFile.toPath());
-						lines.add(0,"import xml.etree.ElementTree as ET");
-						Path tempScript = Files.createTempFile("script", ".py");
-						for (String line: lines) {
-							if (line.contains("QuantumCircuit(")) {
-								String label = line.substring(0,line.indexOf("=")).trim();
-								System.out.println("label = " + label);
-							}
-						}
-						Path testScript = Paths.get("/Users/mjh/Documents/physics/quantumjava/test.txt");
-						Files.write(testScript,lines,Charset.defaultCharset());
-						if (qiskit == null) {
-							qiskit = new QiskitProcess();
-						}
-						System.out.println("Invoking qiskitRun");
-						qiskit.qiskitRun(selectedFile.toString());
+					if (pythonAPI == null) {
+						pythonAPI = new PythonProcess();
 					}
-					catch (IOException ioex) {
-						ioex.printStackTrace();
+					try {
+						System.out.println("Invoking qiskitRun");
+						pythonAPI.qiskitRun(selectedFile.toString());
+					}
+					catch (Exception ex) {
+						ex.printStackTrace();
 					}
 					//qiskit.read("print('Hello, World!')");
 					//StringBuilder cmd = new StringBuilder("exec(open(\"");
@@ -316,17 +304,22 @@ public class QuantumJava extends Application {
 			}
 		});
 		Menu openAsMenu = new Menu("Open As...");
-		MenuItem openAsJava = new MenuItem("Java");
-		MenuItem openAsPython = new MenuItem("Python");
-		openAsMenu.getItems().addAll(openAsJava, openAsPython);
+		MenuItem openAsStrange = new MenuItem("Strange Java");
+		MenuItem openAsQiskit = new MenuItem("Qiskit Python");
+		MenuItem openAsCirq = new MenuItem("Cirq Python");
+		openAsStrange.setOnAction((e) -> {
+			System.out.println("Open As String");
+		});
+		openAsMenu.getItems().addAll(openAsStrange, openAsQiskit, openAsCirq);
 		MenuItem saveItem = new MenuItem("Save...");
 		saveItem.setOnAction((e) -> {
 			System.out.println("Save not currently supported");
 		});
 		Menu saveAsMenu = new Menu("Save As...");
-		MenuItem saveJavaItem = new MenuItem("Java");
-		MenuItem savePythonItem = new MenuItem("Python");
-		saveAsMenu.getItems().addAll(saveJavaItem, savePythonItem);
+		MenuItem saveStrangeItem = new MenuItem("Strange Java");
+		MenuItem saveQiskitItem = new MenuItem("Qiskit Python");
+		MenuItem saveCirqItem = new MenuItem("Cirq Python");
+		saveAsMenu.getItems().addAll(saveStrangeItem, saveQiskitItem, saveCirqItem);
 		fileMenu.getItems().addAll(openItem, openAsMenu, saveItem, saveAsMenu, 
 			new SeparatorMenuItem(), importItem, exportItem);
 		menuBar.getMenus().addAll(fileMenu, bookMenu);
