@@ -22,6 +22,7 @@ cp strange.stg us/hall/qcapp/strange.stg
 cp python.stg us/hall/qcapp/python.stg
 cp styles.css us/hall/qcapp/styles.css
 cp qiskit_wrapper.py us/hall/qcapp/qiskit_wrapper.py
+cp cirq_wrapper.py us/hall/qcapp/cirq_wrapper.py
 
 jar -cvf qcapp.jar us
 mv qcapp.jar input/qcapp.jar

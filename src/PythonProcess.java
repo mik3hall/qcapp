@@ -26,26 +26,58 @@ public class PythonProcess {
 		Cirq
 	}
 	
-	private static Process p = null;
+	private static PythonProcess pythonProcess = null;
 	private PrintStream procout;
 	private	PrintStream out = System.out;
-	private Path env = null, wrapperPath = null;
+	private Path qisVenv = null, 
+				 cirqVenv = null,
+				 qisWrapper = null,
+				 cirqWrapper = null;
 	StringTemplateGroup stg = null;
 	
 	public PythonProcess() {
-		p = init();
+		//p = init();
 	}
 
+	public static void open(String fileName) {
+		if (pythonProcess == null) {
+			pythonProcess = new PythonProcess();
+		}
+		PythonAPI api = findAPI(fileName);
+		try {
+			if (api == PythonAPI.QisKit) {
+				System.out.println("Invoking Qiskit");
+				pythonProcess.qiskitRun(fileName);
+			}
+			else {
+				System.out.println("Invoking Cirq");
+				pythonProcess.cirqRun(fileName);
+			}
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		//qiskit.read("print('Hello, World!')");
+		//StringBuilder cmd = new StringBuilder("exec(open(\"");
+		//cmd.append(selectedFile.toString());
+		//cmd.append("\").read(), globals())");
+		//qiskit.read(cmd.toString());
+		//return;
+	}
+	
 	public void pythonRun(String script) {
 		System.out.println(script);
 	}
 	
-	public void qiskitRun(String script) {
-		System.out.println(script);
+	public void qiskitRun(String scriptPath) {
+		if (qisVenv == null) {
+			init(PythonAPI.QisKit);
+		}
+		System.out.println(scriptPath);
 		StringTemplate executeT = stg.getInstanceOf("execute");
-		executeT.setAttribute("venvPath", env.toString());
-		executeT.setAttribute("wrapperPath", wrapperPath.toString());
-		executeT.setAttribute("script", script);
+		executeT.setAttribute("venvPath", qisVenv.toString());
+		executeT.setAttribute("wrapperPath", qisWrapper.toString());
+		executeT.setAttribute("scriptPath", scriptPath);
 		try {
 			Path qiskitScript = Files.createTempFile("qiskit_script", ".sh");
 			Set<PosixFilePermission> permissions = Files.getPosixFilePermissions(qiskitScript);
@@ -66,11 +98,38 @@ public class PythonProcess {
 		catch (IOException ioex) { ioex.printStackTrace(); }
 	}
 	
-	public void cirqRun(String script) {
-	
+	public void cirqRun(String scriptPath) {
+		if (cirqVenv == null) {
+			init(PythonAPI.Cirq);
+		}
+		System.out.println(scriptPath);
+		StringTemplate executeT = stg.getInstanceOf("execute");
+		executeT.setAttribute("venvPath", cirqVenv.toString());
+		executeT.setAttribute("wrapperPath", cirqWrapper.toString());
+		executeT.setAttribute("scriptPath", scriptPath);
+		try {
+			Path cirqScript = Files.createTempFile("cirq_script", ".sh");
+			Set<PosixFilePermission> permissions = Files.getPosixFilePermissions(cirqScript);
+			permissions.add(PosixFilePermission.OWNER_EXECUTE);
+			Files.setPosixFilePermissions(cirqScript, permissions);
+			System.out.println("cirqScript " + cirqScript.toString());
+			FileWriter fileWriter = new FileWriter(cirqScript.toString(), true);   
+			BufferedWriter bw = new BufferedWriter(fileWriter);
+			Path xml = Files.createTempFile("xmlout",".xml");
+			executeT.setAttribute("xmlfile", xml.toString());
+			System.out.println(executeT);
+			bw.write(executeT.toString());
+			bw.close();
+			String result = rtexec(new String[] { cirqScript.toString() }, true);
+			System.out.println(xml + " " + Files.size(xml));
+			new StrangeProgram(xml.toFile());
+			//System.out.println(result);
+		}
+		catch (IOException ioex) { ioex.printStackTrace(); }
+		
 	}
 
-	private Optional<String> findAPIImport(String filePath) {
+	private static  Optional<String> findAPIImport(String filePath) {
         try (Stream<String>lines = Files.lines(Paths.get(filePath))) {
             	return lines.filter(line -> (line.contains("qiskit") || line.contains("cirq")) && line.contains("import"))
                 .findFirst(); // Stops after finding the first match
@@ -80,7 +139,7 @@ public class PythonProcess {
         }
     }
     
-    private PythonAPI findAPI(String filePath) {
+    private static PythonAPI findAPI(String filePath) {
     	Optional<String> api = findAPIImport(filePath);
         if (api.isPresent()) {
         	if (api.get().contains("qiskit")) return PythonAPI.QisKit;
@@ -125,37 +184,58 @@ public class PythonProcess {
        catch(Throwable tossed) { tossed.printStackTrace(); }
        return "-";
     }
-   
-	private final Process init() {
+   	
+	private final void init(PythonAPI pyAPI) {
 		InputStream is = null;
 		ProcessBuilder pb; 
+		StringTemplate launchT = null;
+		Path init_script = null;
+		Path wrapperPath = null;
+		
 		try {
-			env = Files.createTempDirectory("python_env");
+			is = getClass().getResourceAsStream("python.stg");
+			stg = new StringTemplateGroup(new InputStreamReader(is),DefaultTemplateLexer.class);			
+			if (pyAPI.name().equals("QisKit")) {
+				qisVenv = Files.createTempDirectory("qiskit_env");
+				launchT = stg.getInstanceOf("launchQiskit");
+				launchT.setAttribute("path", qisVenv.toString());
+				is = getClass().getResourceAsStream("qiskit_wrapper.py");
+				if (is == null) {
+					// Handle case where resource is not found
+					System.err.println("Resource not found: qiskit_wrapper.py");
+					return;
+				}
+				wrapperPath = Files.createTempFile("qiskit_wrapper", ".py");
+				qisWrapper = wrapperPath;
+			}
+			else {
+				cirqVenv = Files.createTempDirectory("cirq_env");
+				launchT = stg.getInstanceOf("launchCirq");
+				launchT.setAttribute("path", cirqVenv.toString());
+				is = getClass().getResourceAsStream("cirq_wrapper.py");
+				if (is == null) {
+					// Handle case where resource is not found
+					System.err.println("Resource not found: cirq_wrapper.py");
+					return;
+				}
+				wrapperPath = Files.createTempFile("cirq_wrapper", ".py");
+				cirqWrapper = wrapperPath;
+			}
 			Path initScript = Files.createTempFile("init_script", ".sh");
 			Set<PosixFilePermission> permissions = Files.getPosixFilePermissions(initScript);
             permissions.add(PosixFilePermission.OWNER_EXECUTE);
             Files.setPosixFilePermissions(initScript, permissions);
 			//pb = new ProcessBuilder(new String[] { "bash", "-v", initScript.toString() });
 			pb = new ProcessBuilder(initScript.toString());
-			is = getClass().getResourceAsStream("python.stg");
-			stg = new StringTemplateGroup(new InputStreamReader(is),DefaultTemplateLexer.class);
-			StringTemplate launchT = stg.getInstanceOf("launch");
-			launchT.setAttribute("path",env.toString());
 			FileWriter fileWriter = new FileWriter(initScript.toString(), true);   
     		BufferedWriter bw = new BufferedWriter(fileWriter);
     		System.out.println(launchT);
-    		bw.write(launchT.toString()); // .replace('@','$'));
+    		bw.write(launchT.toString()); 
     		bw.close();
-    		String result = rtexec(new String[] { initScript.toString() }, true);
-    		is = getClass().getResourceAsStream("qiskit_wrapper.py");
-    		if (is == null) {
-				// Handle case where resource is not found
-				System.err.println("Resource not found: qiskit_wrapper.py");
-			}
-			wrapperPath = Files.createTempFile("qiskit_wrapper", ".py");
-			Files.copy(is, wrapperPath, StandardCopyOption.REPLACE_EXISTING);
+    		String result = rtexec(new String[] { initScript.toString() }, true);    		
+			Files.copy(is, wrapperPath , StandardCopyOption.REPLACE_EXISTING);
 			is.close();
-			return null;
+			return;
     		//System.out.println(result);
 			//return pb.start();
 		}

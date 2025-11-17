@@ -35,6 +35,8 @@ import java.util.List;
 
 import org.redfx.strangefx.ui.QubitBoard;
 
+import us.hall.qcapp.PythonProcess.PythonAPI;
+
 public class QuantumJava extends Application {
 
 	private final static MethodHandles.Lookup publicLookup = MethodHandles.publicLookup();
@@ -49,7 +51,7 @@ public class QuantumJava extends Application {
     //private FXMLLoader iLoader = null;		// Import option FXML loader
     //private FXMLLoader exLoader = null;     // Export option FXML loader
 	AnchorPane exportRoot = null; 
-	private PythonProcess pythonAPI = null;
+	private PythonProcess pythonProcess = null;
 	
     static {
     	classes.put("CH02 hellostrange", org.redfx.javaqc.ch02.hellostrange.Main.class);
@@ -271,20 +273,31 @@ public class QuantumJava extends Application {
 		MenuItem openItem = new MenuItem("Open...");
 		openItem.setOnAction((e) -> {
 			FileChooser fileChooser = new FileChooser();
-			fileChooser.setTitle("Open QC Strange Program");
+			fileChooser.setTitle("Open QC Program");
 			File selectedFile = fileChooser.showOpenDialog(stage);
 			if (selectedFile != null) {
-				if (selectedFile.toString().endsWith(".py")) {
-					if (pythonAPI == null) {
-						pythonAPI = new PythonProcess();
+				String fileName = selectedFile.toString();
+				if (fileName.endsWith(".py")) {
+					PythonProcess.open(fileName);
+					/*
+					if (pythonProcess == null) {
+						pythonProcess = new PythonProcess();
 					}
+					PythonAPI api = PythonProcess.findAPI(fileName);
 					try {
-						System.out.println("Invoking qiskitRun");
-						pythonAPI.qiskitRun(selectedFile.toString());
+						if (api == PythonAPI.QisKit) {
+							System.out.println("Invoking Qiskit");
+							pythonProcess.qiskitRun(fileName);
+						}
+						else {
+							System.out.println("Invoking Cirq");
+							pythonProcess.cirqRun();
+						}
 					}
 					catch (Exception ex) {
 						ex.printStackTrace();
 					}
+					*/
 					//qiskit.read("print('Hello, World!')");
 					//StringBuilder cmd = new StringBuilder("exec(open(\"");
 					//cmd.append(selectedFile.toString());

@@ -3,6 +3,9 @@
 A quantum computing simulation application originally built on the java 'strange' API indicated in the immediately following section. It has been extended with an XML import/export format for
 quantum circuits. With the current update there is additional support for using the IBM Qiskit API in python.<br/>
 
+**11/16/25** Cirq scripts can be run. bell_state_cirq.py is the only current test case. That may have an extra Hadamard initially set for the target qubit. It occurred to me that this only ensures an entangled state if that qubit is initially in a 0 state. There doesn't seem to be a 'zero' gate, that deterministically ensures this. It does seem to be an assumption of all the API's that the qubits start out in a known 0 state. This seems a little odd to me. The application rendering the target qubit offset is a bug. Cirq scripts can't get generated from XML yet. The 'Open...' option from the application will try to determine whether a .py file is Qiskit or Cirq. Some more GUI control of the interchange options, saving program source or XML resulting from actions will probably be in the next upcoming update. Some additional cleanup has been done.
+
+_______________________________________
 **11/09/25** xml2qis generates a simple qiskit program from XML. Starting [Google Cirq](https://quantumai.google/cirq) wrapper. Some renaming and refactoring for two different python API's. 
 A little cleanup. Leaving out application since GitHub says it's too big. I will see if I can
 include accepted releases in the next update.

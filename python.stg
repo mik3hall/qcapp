@@ -1,7 +1,7 @@
 group qiskit;
 
 
-launch(path) ::= <<
+launchQiskit(path) ::= <<
 #!/bin/bash
      
 python3 -m venv $path$
@@ -19,7 +19,7 @@ pip install qiskit-aer
 echo "Qiskit venv Initialization Complete"
 >>
 
-launch_cirq(path) ::= <<
+launchCirq(path) ::= <<
 
 python3 -m venv $path$
 
@@ -29,17 +29,19 @@ pip install cirq
 
 pip install 'cirq-core[contrib]'
 
+pip install numpy
+ 
 echo "Cirq venv Initialization Complete"
 >>
  
-execute(venvPath, wrapperPath, script, xmlfile) ::= <<
+execute(venvPath, wrapperPath, scriptPath, xmlfile) ::= <<
 #!/bin/bash
 
 # Activate the virtual environment
 source $venvPath$/bin/activate
 
 # Run your Python script
-python3 $wrapperPath$ $script$ $xmlfile$
+python3 $wrapperPath$ $scriptPath$ $xmlfile$
 
 >>
 

@@ -91,7 +91,9 @@ public class XMLDocument {
 		Element python = doc.createElement("python");
 		languages.appendChild(python);
         Element circuit = doc.createElementNS("urn:qis:circuit:1_0","c:Circuit");
-        circuit.setAttribute("size",Integer.toString(snum));
+        // Fundamentally, a quantum circuit has a specific size
+		// (it's number of input and output qubits)
+        circuit.setAttribute("size",Integer.toString(qnum));
         rootElement.appendChild(circuit);
         Gate[][] gates = new Gate[snum][qnum];
 		for (int s = 0; s < snum; s++) {

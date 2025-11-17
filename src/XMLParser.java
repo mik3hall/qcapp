@@ -140,14 +140,18 @@ public class XMLParser extends DefaultHandler {
 		switch(qualifiedName) {
 			case CIRCUIT:
 				circuit = new Circuit();
+				boolean haveSize = false;
 				for (int i = 0; i < attrs.getLength(); i++) {
 					if (attrs.getQName(i).equals("size")) {
 						circuit.setSize(Integer.parseInt(attrs.getValue(i)));
+						haveSize = true;
 						//program.add(circuit);
 						break;
 					}
 				}
-				System.out.println("Circuit size not found");
+				if (!haveSize){
+					System.out.println("Circuit size not found");
+				}
 				break;
 			case GATE:
 				elementType = ElementType.GateType;
